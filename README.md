@@ -3,11 +3,11 @@ Implementation of CAN driver for SAME70
 
 In order to use this driver you must:
 
-[0] Add this driver to your project (inculde "same70_can_driver.h" where you need to use it).
+[0] Add this driver to your project (include "same70_can_driver.h" where you need to use it).
 
 [1] Have the dependency "c-utils" in your project that you can find: https://github.com/LentzTechMaster/c-utils.git
 
-[2] Add MCAN to your project using the ASF Wizzard.
+[2] Add MCAN to your project using the ASF Wizard.
 
 [3] You have to setup the conf_mcan.h like the following:
 
