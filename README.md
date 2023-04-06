@@ -100,7 +100,7 @@ Remark: If you want to only use one of the 2 CAN lines you can define only the o
 
 [5] Enjoy!
 
-/!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\
+/!\ /!\ /!\
 WARNING: This driver does not work when caching is enabled.
 This means that "CONF_BOARD_ENABLE_CACHE" SHOULD NOT be defined in conf_board.h.
-/!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\
+/!\ /!\ /!\
