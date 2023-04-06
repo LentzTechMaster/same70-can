@@ -70,7 +70,7 @@ typedef struct mcan_buffer_t {
     //flags
     volatile uint8_t adding_in_tx_buffer;
     //TODO It might be possible to make of these 2 flags only one
-    volatile uint8_t interruption_occured_while_adding_in_tx_buffer;
+    volatile uint8_t interruption_occurred_while_adding_in_tx_buffer;
     volatile uint8_t buffer_being_emptied_by_interruption;
 }mcan_buffer_t;
 
@@ -184,25 +184,27 @@ struct mcan_rx_element_buffer mcan1_rx_element_buffer;
  * One to accept all standard messages and to put them inside FIFO 0
  * Another one to accept all extended messages and to put them inside FIFO 1
  * 
- * @param mcan_mod MCAN instance.
+ * @param module_inst MCAN instance.
  */
-void _mcan_configure_rx_fifo_to_accept_all(struct mcan_module* mcan_mod);
+void _mcan_configure_rx_fifo_to_accept_all(struct mcan_module* module_inst);
 
 /**
- * @brief Configure clocks, interruptions, initiate variables, ... for MCAN0 
+* @brief Configure clocks, interruptions, initiate variables, ... for MCAN0 
  * 
+ * @param baudrate baudrate in bits/second
  * @param rx_buffer_size Number of element the rx buffer can hold.
  * @param tx_buffer_size Number of element the tx buffer can hold.
  */
-void mcan0_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size);
+void mcan0_configure(uint32_t baudrate, uint32_t rx_buffer_size, uint32_t tx_buffer_size);
 
 /**
- * @brief Configure clocks, interruptions, initiate variables, ... for MCAN1 
+* @brief Configure clocks, interruptions, initiate variables, ... for MCAN1 
  * 
+ * @param baudrate baudrate in bits/second
  * @param rx_buffer_size Number of element the rx buffer can hold.
  * @param tx_buffer_size Number of element the tx buffer can hold.
  */
-void mcan1_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size);
+void mcan1_configure(uint32_t baudrate, uint32_t rx_buffer_size, uint32_t tx_buffer_size);
 
 /**
  * @brief Pushes inside the rx buffer the received element composed of r0, r1 and data.
@@ -233,9 +235,9 @@ void _mcan1_push_message(MCAN_RX_ELEMENT_R0_Type r0, MCAN_RX_ELEMENT_R1_Type r1,
  * @param data Pointer to message data.
  * @param data_length Number of message data.
  * @param is_extended 1 if is extended, 0 if standard message.
- * @param is_remote_transmition 1 if is RTR, 0 if not.
+ * @param is_remote_transmission 1 if is RTR, 0 if not.
  */
-void _mcan_send_message(struct mcan_module *const module_inst, uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmition);
+void _mcan_send_message(struct mcan_module* module_inst, uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmission);
 
 /**
  * @brief This sends a message using tx buffer and interruptions.
@@ -244,10 +246,10 @@ void _mcan_send_message(struct mcan_module *const module_inst, uint32_t id_value
  * @param data Pointer to message data.
  * @param data_length Number of message data.
  * @param is_extended 1 if is extended, 0 if standard message.
- * @param is_remote_transmition 1 if is RTR, 0 if not.
+ * @param is_remote_transmission 1 if is RTR, 0 if not.
  * @return uint8_t Buffer action status.
  */
-uint8_t mcan0_send_message(uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmition);
+uint8_t mcan0_send_message(uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmission);
 
 /**
  * @brief This sends a message using tx buffer and interruptions.
@@ -256,10 +258,10 @@ uint8_t mcan0_send_message(uint32_t id_value, uint8_t *data, uint32_t data_lengt
  * @param data Pointer to message data.
  * @param data_length Number of message data.
  * @param is_extended 1 if is extended, 0 if standard message.
- * @param is_remote_transmition 1 if is RTR, 0 if not.
+ * @param is_remote_transmission 1 if is RTR, 0 if not.
  * @return uint8_t Buffer action status.
  */
-uint8_t mcan1_send_message(uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmition);
+uint8_t mcan1_send_message(uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmission);
 
 /**
  * @brief Give number of available messages inside the rx buffer.
@@ -278,7 +280,7 @@ uint32_t mcan1_available_message(void);
 /**
  * @brief Pops message from the rx buffer.
  * 
- * @param ts_rx_message Pointer totimestamped rx message to write to.
+ * @param ts_rx_message Pointer to timestamped rx message to write to.
  * @return uint8_t Buffer action status.
  */
 uint8_t mcan0_get_message(mcan_timestamped_rx_message_t* ts_rx_message);
@@ -291,4 +293,27 @@ uint8_t mcan0_get_message(mcan_timestamped_rx_message_t* ts_rx_message);
  */
 uint8_t mcan1_get_message(mcan_timestamped_rx_message_t* ts_rx_message);
 
+/**
+ * @brief Starts MCAN0 after init.
+ * 
+ */
+void mcan0_start(void);
+
+/**
+ * @brief Starts MCAN1 after init.
+ * 
+ */
+void mcan1_start(void);
+
+/**
+ * @brief Stops MCAN0.
+ * 
+ */
+void mcan0_stop(void);
+
+/**
+ * @brief Stops MCAN1.
+ * 
+ */
+void mcan1_stop(void);
 #endif /* SAM70_CAN_DRIVER_H_ */

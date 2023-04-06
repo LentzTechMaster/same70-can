@@ -2,7 +2,7 @@
 
 uint8_t has_UPLL_been_set = 0;
 
-void _mcan_configure_rx_fifo_to_accept_all(struct mcan_module* mcan_mod)
+void _mcan_configure_rx_fifo_to_accept_all(struct mcan_module* module_inst)
 {
 	/*  
 	 *  Setup rx filtering to accept messages into FIFO1 with extended format
@@ -17,7 +17,7 @@ void _mcan_configure_rx_fifo_to_accept_all(struct mcan_module* mcan_mod)
 	et_filter.F0.bit.EFEC = MCAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F0_EFEC_STF1M_Val;//Put in fifo1
 	et_filter.F1.bit.EFT = 2;//classic filter
 
-	mcan_set_rx_extended_filter(mcan_mod, &et_filter, 0);
+	mcan_set_rx_extended_filter(module_inst, &et_filter, 0);
 
 	/*  
 	 *  Setup rx filtering to accept messages into FIFO0 with standard format
@@ -29,11 +29,11 @@ void _mcan_configure_rx_fifo_to_accept_all(struct mcan_module* mcan_mod)
 	sd_filter.S0.bit.SFID2 = 0;//Mask
 	sd_filter.S0.bit.SFEC = MCAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_SFEC_STF0M_Val;//Put in fifo0
 	sd_filter.S0.bit.SFT = 2;//classic filter
-	mcan_set_rx_standard_filter(mcan_mod, &sd_filter, 0);
+	mcan_set_rx_standard_filter(module_inst, &sd_filter, 0);
 }
 
-void mcan0_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
-{	/**/
+void mcan0_configure(uint32_t baudrate, uint32_t rx_buffer_size, uint32_t tx_buffer_size)
+{	
 	mcan0_standard_receive_index = 0;
 	mcan0_extended_receive_index = 0;
 
@@ -41,7 +41,7 @@ void mcan0_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
 	circ_buf_flex_init_buffer(&mcan0_buffer.buffer_tx, tx_buffer_size, sizeof(mcan_tx_message_t));
 	
 	mcan0_buffer.adding_in_tx_buffer = false;
-	mcan0_buffer.interruption_occured_while_adding_in_tx_buffer = false;
+	mcan0_buffer.interruption_occurred_while_adding_in_tx_buffer = false;
 	mcan0_buffer.buffer_being_emptied_by_interruption = false;
 
 	struct mcan_config config_mcan;
@@ -50,6 +50,8 @@ void mcan0_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
 	config_mcan.nonmatching_frames_action_extended = MCAN_NONMATCHING_FRAMES_REJECT;
 
 	mcan_init(&mcan0_instance, MCAN0, &config_mcan);
+
+	mcan_set_baudrate(mcan0_instance.hw, baudrate);
 	
 	if(!has_UPLL_been_set)
 	{
@@ -57,7 +59,7 @@ void mcan0_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
 		//NEED TO HAVE THE RIGHT conf_mcan.h !
 		pmc_enable_upll_clock();
 		// This was firstly changed to "pmc_switch_pck_to_pllack(PMC_PCK_5, PMC_PCK_PRES(9));" in the mcan_init function above.
-		//It is recomendedd in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
+		//It is recomended in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
 		pmc_disable_pck(PMC_PCK_5);
 		//dividing uppl by 6 to get a 80 Mhz signal which is again divided by 8 in the CONF_MCAN_NBTP_NBRP_VALUE in the conf_mcan.h to get a 10 MHz.
 		pmc_switch_pck_to_upllck(PMC_PCK_5, PMC_PCK_PRES(5));
@@ -66,7 +68,7 @@ void mcan0_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
 		has_UPLL_been_set = 1;
 	}
 
-	//chosing what interruption to activate
+	//choosing what interruption to activate
 	mcan_enable_interrupt(&mcan0_instance,
 	 	MCAN_RX_FIFO_1_NEW_MESSAGE |
 		MCAN_RX_BUFFER_NEW_MESSAGE |
@@ -98,8 +100,8 @@ void mcan0_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
     mcan_start(&mcan0_instance);
 }
 
-void mcan1_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
-{	/**/
+void mcan1_configure(uint32_t baudrate, uint32_t rx_buffer_size, uint32_t tx_buffer_size)
+{	
 	mcan1_standard_receive_index = 0;
 	mcan1_extended_receive_index = 0;
 
@@ -107,7 +109,7 @@ void mcan1_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
 	circ_buf_flex_init_buffer(&mcan1_buffer.buffer_tx, tx_buffer_size, sizeof(mcan_tx_message_t));
 
 	mcan1_buffer.adding_in_tx_buffer = false;
-	mcan1_buffer.interruption_occured_while_adding_in_tx_buffer = false;
+	mcan1_buffer.interruption_occurred_while_adding_in_tx_buffer = false;
 	mcan1_buffer.buffer_being_emptied_by_interruption = false;
 
 	struct mcan_config config_mcan;
@@ -117,6 +119,8 @@ void mcan1_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
 	config_mcan.tx_queue_mode = false;
 
 	mcan_init(&mcan1_instance, MCAN1, &config_mcan);
+
+	mcan_set_baudrate(mcan1_instance.hw, baudrate);
 	
 	if(!has_UPLL_been_set)
 	{
@@ -124,7 +128,7 @@ void mcan1_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
 		//NEED TO HAVE THE RIGHT conf_mcan.h !
 		pmc_enable_upll_clock();
 		// This was firstly changed to "pmc_switch_pck_to_pllack(PMC_PCK_5, PMC_PCK_PRES(9));" in the mcan_init function above.
-		//It is recomendedd in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
+		//It is recomended in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
 		pmc_disable_pck(PMC_PCK_5);
 		//dividing uppl by 6 to get a 80 Mhz signal which is again divided by 8 in the CONF_MCAN_NBTP_NBRP_VALUE in the conf_mcan.h to get a 10 MHz.
 		pmc_switch_pck_to_upllck(PMC_PCK_5, PMC_PCK_PRES(5));
@@ -133,7 +137,7 @@ void mcan1_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
 		has_UPLL_been_set = 1;
 	}	
 
-	//chosing what interruption to activate
+	//choosing what interruption to activate
 	mcan_enable_interrupt(&mcan1_instance,
 	 	MCAN_RX_FIFO_1_NEW_MESSAGE |
 		MCAN_RX_BUFFER_NEW_MESSAGE |
@@ -215,7 +219,14 @@ void _mcan1_push_message(MCAN_RX_ELEMENT_R0_Type r0, MCAN_RX_ELEMENT_R1_Type r1,
 	message.message_info.bit.is_received_with_bitrate_switch = r1.bit.BRS;
 
 	
-	message.id = r0.bit.ID;
+	if(message.message_info.bit.is_extended)
+	{
+		message.id = r0.bit.ID;
+	}
+	else
+	{
+		message.id = GET_BITS(r0.bit.ID, 18, 29);
+	}
 	message.dlc = r1.bit.DLC;
 	for (uint8_t i = 0; i < message.dlc; i++)
 	{
@@ -337,7 +348,7 @@ void MCAN0_INT0_Handler(void)
 
 void MCAN0_INT1_Handler(void)
 {
-	volatile uint32_t status, i;
+	volatile uint32_t status;
 	status = mcan_read_interrupt_status(&mcan0_instance);
 	
 	if (status & MCAN_TIMESTAMP_COMPLETE)//This should be called MCAN_TRANSMISSION_COMPLETE, error from ASF. Might be fixed in the future!
@@ -363,7 +374,7 @@ void MCAN0_INT1_Handler(void)
 				mcan0_buffer.buffer_being_emptied_by_interruption = false;
 			}
 		}
-		else mcan0_buffer.interruption_occured_while_adding_in_tx_buffer = true;
+		else mcan0_buffer.interruption_occurred_while_adding_in_tx_buffer = true;
 	}
 
 	if (status & MCAN_TX_CANCELLATION_FINISH)
@@ -536,7 +547,7 @@ void MCAN1_INT0_Handler(void)
 
 void MCAN1_INT1_Handler(void)
 {
-	volatile uint32_t status, i;
+	volatile uint32_t status;
 	status = mcan_read_interrupt_status(&mcan1_instance);
 	
 	if (status & MCAN_TIMESTAMP_COMPLETE)//This should be called MCAN_TRANSMISSION_COMPLETE, error from ASF. Might be fixed in the future!
@@ -563,7 +574,7 @@ void MCAN1_INT1_Handler(void)
 				mcan1_buffer.buffer_being_emptied_by_interruption = false;
 			}
 		}
-		else mcan1_buffer.interruption_occured_while_adding_in_tx_buffer = true;
+		else mcan1_buffer.interruption_occurred_while_adding_in_tx_buffer = true;
 	}
 
 	if (status & MCAN_TX_CANCELLATION_FINISH)
@@ -631,7 +642,7 @@ inline uint32_t mcan_get_interrupt(struct mcan_module *const module_inst, const 
 	return EXTRACT_X(module_inst->hw->MCAN_IE, source);
 }
 
-void _mcan_send_message(struct mcan_module *const module_inst, uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmition)
+void _mcan_send_message(struct mcan_module *const module_inst, uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmission)
 {
 	uint32_t i;
 	struct mcan_tx_element tx_element;
@@ -647,7 +658,7 @@ void _mcan_send_message(struct mcan_module *const module_inst, uint32_t id_value
 		tx_element.T0.reg |= MCAN_TX_ELEMENT_T0_STANDARD_ID(id_value);
 	}
 
-	if(is_remote_transmition)
+	if(is_remote_transmission)
 	{
 		tx_element.T0.bit.RTR = 1;
 	}
@@ -663,7 +674,7 @@ void _mcan_send_message(struct mcan_module *const module_inst, uint32_t id_value
 	mcan_tx_transfer_request(module_inst, 1 << offsetTX);
 }
 
-uint8_t mcan0_send_message(uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmition)
+uint8_t mcan0_send_message(uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmission)
 {
 	uint8_t result;
 
@@ -681,7 +692,7 @@ uint8_t mcan0_send_message(uint32_t id_value, uint8_t *data, uint32_t data_lengt
 		tx_element.T0.reg |= MCAN_TX_ELEMENT_T0_STANDARD_ID(id_value);
 	}
 
-	if(is_remote_transmition)
+	if(is_remote_transmission)
 	{
 		tx_element.T0.bit.RTR = 1;
 	}
@@ -697,7 +708,7 @@ uint8_t mcan0_send_message(uint32_t id_value, uint8_t *data, uint32_t data_lengt
 	result = circ_buf_flex_push(&mcan0_buffer.buffer_tx, &tx_element);
 	mcan0_buffer.adding_in_tx_buffer = false;
 
-	if((mcan0_buffer.interruption_occured_while_adding_in_tx_buffer | !mcan0_buffer.buffer_being_emptied_by_interruption) & result == CBF_SUCCESS)
+	if((mcan0_buffer.interruption_occurred_while_adding_in_tx_buffer | !mcan0_buffer.buffer_being_emptied_by_interruption) & (result == CBF_SUCCESS))
 	{
 		//No need of this if we've just added a message to the buffer and prevent interruption to deal with messages !
 		//We know for sure that there is at least the message in our buffer.
@@ -710,7 +721,7 @@ uint8_t mcan0_send_message(uint32_t id_value, uint8_t *data, uint32_t data_lengt
 			mcan_tx_transfer_request(&mcan0_instance, 1 << CONF_MCAN0_TX_BUFFER_NUM);
 			
 			//reset flags
-			mcan0_buffer.interruption_occured_while_adding_in_tx_buffer = false;
+			mcan0_buffer.interruption_occurred_while_adding_in_tx_buffer = false;
 			mcan0_buffer.buffer_being_emptied_by_interruption = true;
 		}
 	}
@@ -718,7 +729,7 @@ uint8_t mcan0_send_message(uint32_t id_value, uint8_t *data, uint32_t data_lengt
 	return result;
 	
 }
-uint8_t mcan1_send_message(uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmition)
+uint8_t mcan1_send_message(uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmission)
 {
 	uint8_t result;
 
@@ -736,7 +747,7 @@ uint8_t mcan1_send_message(uint32_t id_value, uint8_t *data, uint32_t data_lengt
 		tx_element.T0.reg |= MCAN_TX_ELEMENT_T0_STANDARD_ID(id_value);
 	}
 
-	if(is_remote_transmition)
+	if(is_remote_transmission)
 	{
 		tx_element.T0.bit.RTR = 1;
 	}
@@ -752,7 +763,7 @@ uint8_t mcan1_send_message(uint32_t id_value, uint8_t *data, uint32_t data_lengt
 	result = circ_buf_flex_push(&mcan1_buffer.buffer_tx, &tx_element);
 	mcan1_buffer.adding_in_tx_buffer = false;
 
-	if((mcan1_buffer.interruption_occured_while_adding_in_tx_buffer | !mcan1_buffer.buffer_being_emptied_by_interruption) & result == CBF_SUCCESS)
+	if((mcan1_buffer.interruption_occurred_while_adding_in_tx_buffer | !mcan1_buffer.buffer_being_emptied_by_interruption) & (result == CBF_SUCCESS))
 	{
 		//No need of this if we've just added a message to the buffer and prevent interruption to deal with messages !
 		//We know for sure that there is at least the message in our buffer.
@@ -765,7 +776,7 @@ uint8_t mcan1_send_message(uint32_t id_value, uint8_t *data, uint32_t data_lengt
 			mcan_tx_transfer_request(&mcan1_instance, 1 << CONF_MCAN1_TX_BUFFER_NUM);
 
 			//reset flags
-			mcan1_buffer.interruption_occured_while_adding_in_tx_buffer = false;
+			mcan1_buffer.interruption_occurred_while_adding_in_tx_buffer = false;
 			mcan1_buffer.buffer_being_emptied_by_interruption = true;
 		}
 	}
@@ -790,4 +801,24 @@ uint8_t mcan0_get_message(mcan_timestamped_rx_message_t* ts_rx_message)
 uint8_t mcan1_get_message(mcan_timestamped_rx_message_t* ts_rx_message)
 {
 	return circ_buf_flex_pop(&mcan1_buffer.buffer_rx, ts_rx_message);
+}
+
+void mcan0_start()
+{
+	mcan_start(&mcan0_instance);
+}
+
+void mcan1_start()
+{
+	mcan_start(&mcan1_instance);
+}
+
+void mcan0_stop()
+{
+	mcan_stop(&mcan0_instance);
+}
+
+void mcan1_stop()
+{
+	mcan_stop(&mcan1_instance);
 }
