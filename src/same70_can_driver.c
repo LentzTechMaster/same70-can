@@ -1,9 +1,3 @@
-/*
- * sam70_can_driver.c
- *
- * Created: 3/21/2023 9:29:34 AM
- *  Author: 201013010
- */
 #include "same70_can_driver.h"
 
 uint8_t has_UPLL_been_set = 0;
