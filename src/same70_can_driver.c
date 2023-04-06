@@ -59,7 +59,7 @@ void mcan0_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
 		// This was firstly changed to "pmc_switch_pck_to_pllack(PMC_PCK_5, PMC_PCK_PRES(9));" in the mcan_init function above.
 		//It is recomendedd in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
 		pmc_disable_pck(PMC_PCK_5);
-		//deviding uppl by 6 to get a 80 Mhz signal which is again devided by 8 in the CONF_MCAN_NBTP_NBRP_VALUE in the conf_mcan.h to get a 10 MHz.
+		//dividing uppl by 6 to get a 80 Mhz signal which is again divided by 8 in the CONF_MCAN_NBTP_NBRP_VALUE in the conf_mcan.h to get a 10 MHz.
 		pmc_switch_pck_to_upllck(PMC_PCK_5, PMC_PCK_PRES(5));
 		pmc_enable_pck(PMC_PCK_5);
 
@@ -126,7 +126,7 @@ void mcan1_configure(uint32_t rx_buffer_size, uint32_t tx_buffer_size)
 		// This was firstly changed to "pmc_switch_pck_to_pllack(PMC_PCK_5, PMC_PCK_PRES(9));" in the mcan_init function above.
 		//It is recomendedd in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
 		pmc_disable_pck(PMC_PCK_5);
-		//deviding uppl by 6 to get a 80 Mhz signal which is again devided by 8 in the CONF_MCAN_NBTP_NBRP_VALUE in the conf_mcan.h to get a 10 MHz.
+		//dividing uppl by 6 to get a 80 Mhz signal which is again divided by 8 in the CONF_MCAN_NBTP_NBRP_VALUE in the conf_mcan.h to get a 10 MHz.
 		pmc_switch_pck_to_upllck(PMC_PCK_5, PMC_PCK_PRES(5));
 		pmc_enable_pck(PMC_PCK_5);
 
