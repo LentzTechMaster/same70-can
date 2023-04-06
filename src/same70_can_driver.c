@@ -306,7 +306,7 @@ void MCAN0_INT0_Handler(void)
 		_mcan0_push_message(mcan0_rx_element_fifo_1.R0, mcan0_rx_element_fifo_1.R1, mcan0_rx_element_fifo_1.data, unix_timestamp_ms);
 	}
 	
-	//Usually occures if can tx pin is not connected to transciever or to a tranciever not enabled or the ioport has not been set
+	//Usually occurs if can tx pin is not connected to transceiver or to a transceiver not enabled or the ioport has not been set
 	if (status & MCAN_BUS_OFF) 
 	{
 		mcan_clear_interrupt_status(&mcan0_instance, MCAN_BUS_OFF);
@@ -319,7 +319,7 @@ void MCAN0_INT0_Handler(void)
 		
 	}
 
-	//Usually occures when sending message with different clock (either bad clock from sending device or SAM E70)
+	//Usually occurs when sending message with different clock (either bad clock from sending device or SAM E70)
 	//This means that no receiver has understood your message and thus they did not ack it
 	if (status & MCAN_ACKNOWLEDGE_ERROR) 
 	{
@@ -330,7 +330,7 @@ void MCAN0_INT0_Handler(void)
 		#endif
 	}
 
-	//Usually occures if can rx pin is not connected to transciever or recieving message with different clock (either bad clock from sending device or SAM E70)
+	//Usually occurs if can rx pin is not connected to transceiver or receiving message with different clock (either bad clock from sending device or SAM E70)
 	if (status & MCAN_FORMAT_ERROR) 
 	{
 		mcan_clear_interrupt_status(&mcan0_instance, MCAN_FORMAT_ERROR);
@@ -505,7 +505,7 @@ void MCAN1_INT0_Handler(void)
 		_mcan1_push_message(mcan1_rx_element_fifo_1.R0, mcan1_rx_element_fifo_1.R1, mcan1_rx_element_fifo_1.data, unix_timestamp_ms);
 	}
 	
-	//Usually occures if can tx pin is not connected to transciever or to a tranciever not enabled or the ioport has not been set
+	//Usually occurs if can tx pin is not connected to transceiver or to a transceiver not enabled or the ioport has not been set
 	if (status & MCAN_BUS_OFF) 
 	{
 		mcan_clear_interrupt_status(&mcan1_instance, MCAN_BUS_OFF);
@@ -518,7 +518,7 @@ void MCAN1_INT0_Handler(void)
 		
 	}
 
-	//Usually occures when sending message with different clock (either bad clock from sending device or SAM E70)
+	//Usually occurs when sending message with different clock (either bad clock from sending device or SAM E70)
 	//This means that no receiver has understood your message and thus they did not ack it
 	if (status & MCAN_ACKNOWLEDGE_ERROR) 
 	{
@@ -529,7 +529,7 @@ void MCAN1_INT0_Handler(void)
 		#endif
 	}
 	
-	//Usually occures if can rx pin is not connected to transciever or recieving message with different clock (either bad clock from sending device or SAM E70)
+	//Usually occurs if can rx pin is not connected to transceiver or receiving message with different clock (either bad clock from sending device or SAM E70)
 	if (status & MCAN_FORMAT_ERROR) 
 	{
 		mcan_clear_interrupt_status(&mcan1_instance, MCAN_FORMAT_ERROR);
