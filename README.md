@@ -11,7 +11,7 @@ In order to use this driver you must:
 
 [3] You have to setup the conf_mcan.h like the following:
 
-It has to be exactly the same for baudrate and clock settings. The remaining should not be changed except for: CONF_MCAN_ELEMENT_DATA_SIZE, CONF_MCANx_RX_STANDARD_ID_FILTER_NUM and CONF_MCANx_RX_EXTENDED_ID_FILTER_NUM
+It has to be exactly the same for baudrate and clock settings. The remaining should not be changed except for: CONF_MCAN_ELEMENT_DATA_SIZE, CONF_MCANx_RX_STANDARD_ID_FILTER_NUM and CONF_MCANx_RX_EXTENDED_ID_FILTER_NUM that you can change at your will.
 ```
 #ifndef CONF_MCAN_H_INCLUDED
 #define CONF_MCAN_H_INCLUDED
