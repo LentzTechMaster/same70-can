@@ -10,7 +10,8 @@ In order to use this driver you must:
 [2] Add MCAN to your project using the ASF Wizzard.
 
 [3] You have to setup the conf_mcan.h like the following:
-It has to be exactly the same for baudrate and clock settings.
+
+It has to be exactly the same for baudrate and clock settings. The remaining should not be changed except for: CONF_MCAN_ELEMENT_DATA_SIZE, CONF_MCANx_RX_STANDARD_ID_FILTER_NUM and CONF_MCANx_RX_EXTENDED_ID_FILTER_NUM
 ```
 #ifndef CONF_MCAN_H_INCLUDED
 #define CONF_MCAN_H_INCLUDED
@@ -46,7 +47,7 @@ It has to be exactly the same for baudrate and clock settings.
 /** Range: 1..16 */     
 #define CONF_MCAN1_TX_FIFO_QUEUE_NUM     1     
 /** Range: 1..32 */        
-#define CONF_MCAN1_TX_EVENT_FIFO         (CONF_MCAN1_TX_BUFFER_NUM+CONF_MCAN1_TX_FIFO_QUEUE_NUM)             
+#define CONF_MCAN1_TX_EVENT_FIFO         (CONF_MCAN1_TX_BUFFER_NUM + CONF_MCAN1_TX_FIFO_QUEUE_NUM)             
 /** Range: 1..128 */
 #define CONF_MCAN1_RX_STANDARD_ID_FILTER_NUM     32    
 /** Range: 1..64 */
