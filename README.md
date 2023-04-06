@@ -2,6 +2,7 @@
 Implementation of CAN driver for SAME70
 
 In order to use this driver you must:
+
 [0] Add this driver to your project (inculde "same70_can_driver.h" where you need to use it).
 
 [1] Have the dependency "c-utils" in your project that you can find: https://github.com/LentzTechMaster/c-utils.git
@@ -100,7 +101,8 @@ Remark: If you want to only use one of the 2 CAN lines you can define only the o
 
 [5] Enjoy!
 
-/!\ /!\ /!\
+/!\ /!\ /!\ 
+
 WARNING: This driver does not work when caching is enabled.
 This means that "CONF_BOARD_ENABLE_CACHE" SHOULD NOT be defined in conf_board.h.
-/!\ /!\ /!\
+/!\ /!\ /!\ 
