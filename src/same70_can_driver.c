@@ -367,7 +367,7 @@ void MCAN0_INT1_Handler(void)
 
 				//we have to offset the buffer number in order to write in the fifo memory.
 				mcan_set_tx_buffer_element(&mcan0_instance, &tx_elem, CONF_MCAN0_TX_BUFFER_NUM);
-				int16_t stat = mcan_tx_transfer_request(&mcan0_instance, 1 << CONF_MCAN0_TX_BUFFER_NUM);
+				mcan_tx_transfer_request(&mcan0_instance, 1 << CONF_MCAN0_TX_BUFFER_NUM);
 				mcan0_buffer.buffer_being_emptied_by_interruption = true;
 			}
 			else
