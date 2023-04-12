@@ -58,6 +58,15 @@ licence   : MIT
 */
 
 /*
+  ___ _  _ _   _ __  __ 
+ | __| \| | | | |  \/  |
+ | _|| .` | |_| | |\/| |
+ |___|_|\_|\___/|_|  |_|
+                        
+*/
+enum MCAN_BAUDRATE{MCAN_BR_1_Mbps=1000000, MCAN_BR_800_kbps=800000, MCAN_BR_500_kbps=500000, MCAN_BR_250_kbps=250000, MCAN_BR_125_kbps=125000, MCAN_BR_100_kbps=100000, MCAN_BR_50_kbps=50000, MCAN_BR_20_kbps=20000, MCAN_BR_10_kbps=10000};
+
+/*
   ___ _____ ___ _   _  ___ _____ _   _ ___ ___    ___  ___ ___ ___ _  _ ___ _____ ___ ___  _  _ ___ 
  / __|_   _| _ \ | | |/ __|_   _| | | | _ \ __|  |   \| __| __|_ _| \| |_ _|_   _|_ _/ _ \| \| / __|
  \__ \ | | |   / |_| | (__  | | | |_| |   / _|   | |) | _|| _| | || .` || |  | |  | | (_) | .` \__ \
@@ -189,7 +198,7 @@ struct mcan_rx_element_buffer mcan1_rx_element_buffer;
 void _mcan_configure_rx_fifo_to_accept_all(struct mcan_module* module_inst);
 
 /**
-* @brief Configure clocks, interruptions, initiate variables, ... for MCAN0 
+* @brief Configure clocks, interruptions, initiate variables, ... and start MCAN0 
  * 
  * @param baudrate baudrate in bits/second
  * @param rx_buffer_size Number of element the rx buffer can hold.
@@ -198,7 +207,7 @@ void _mcan_configure_rx_fifo_to_accept_all(struct mcan_module* module_inst);
 void mcan0_configure(uint32_t baudrate, uint32_t rx_buffer_size, uint32_t tx_buffer_size);
 
 /**
-* @brief Configure clocks, interruptions, initiate variables, ... for MCAN1 
+* @brief Configure clocks, interruptions, initiate variables, ... and start MCAN1 
  * 
  * @param baudrate baudrate in bits/second
  * @param rx_buffer_size Number of element the rx buffer can hold.

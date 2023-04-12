@@ -1,6 +1,7 @@
 #include "same70_can_driver.h"
 
-uint8_t has_UPLL_been_set = 0;
+//#define MCAN0_INT1_DEBUG
+//#define MCAN1_INT1_DEBUG
 
 void _mcan_configure_rx_fifo_to_accept_all(struct mcan_module* module_inst)
 {
@@ -51,22 +52,22 @@ void mcan0_configure(uint32_t baudrate, uint32_t rx_buffer_size, uint32_t tx_buf
 
 	mcan_init(&mcan0_instance, MCAN0, &config_mcan);
 
-	mcan_set_baudrate(mcan0_instance.hw, baudrate);
-	
-	if(!has_UPLL_been_set)
-	{
-		//Enabling the upll clock 
-		//NEED TO HAVE THE RIGHT conf_mcan.h !
-		pmc_enable_upll_clock();
-		// This was firstly changed to "pmc_switch_pck_to_pllack(PMC_PCK_5, PMC_PCK_PRES(9));" in the mcan_init function above.
-		//It is recomended in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
-		pmc_disable_pck(PMC_PCK_5);
-		//dividing uppl by 6 to get a 80 Mhz signal which is again divided by 8 in the CONF_MCAN_NBTP_NBRP_VALUE in the conf_mcan.h to get a 10 MHz.
-		pmc_switch_pck_to_upllck(PMC_PCK_5, PMC_PCK_PRES(5));
-		pmc_enable_pck(PMC_PCK_5);
+	//Enabling the upll clock 
+	//NEED TO HAVE THE RIGHT conf_mcan.h !
+	pmc_enable_upll_clock();
+	// This was firstly changed to "pmc_switch_pck_to_pllack(PMC_PCK_5, PMC_PCK_PRES(9));" in the mcan_init function above.
+	//It is recomended in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
+	pmc_disable_pck(PMC_PCK_5);
+	//dividing upll by 6 to get a 80 Mhz signal which is again divided by 8 in the CONF_MCAN_NBTP_NBRP_VALUE in the conf_mcan.h to get a 10 MHz for 500kbits/s default speed.
+	pmc_switch_pck_to_upllck(PMC_PCK_5, PMC_PCK_PRES(5));
+	pmc_enable_pck(PMC_PCK_5);
 
-		has_UPLL_been_set = 1;
-	}
+	//has to be after set of PMC_PCK_5 as it uses it to calculate the MCAN_NBTP_NBRP_VALUE for the given speed.
+	//MCAN_NBTP_NBRP_VALUE = (PMC_PCK_5 frequency)/(baudrate asked)/20
+	//Here (PMC_PCK_5 frequency) = 80Mhz
+	//Changing default speed.
+	mcan_set_baudrate(mcan0_instance.hw, baudrate);
+
 
 	//choosing what interruption to activate
 	mcan_enable_interrupt(&mcan0_instance,
@@ -120,22 +121,21 @@ void mcan1_configure(uint32_t baudrate, uint32_t rx_buffer_size, uint32_t tx_buf
 
 	mcan_init(&mcan1_instance, MCAN1, &config_mcan);
 
-	mcan_set_baudrate(mcan1_instance.hw, baudrate);
-	
-	if(!has_UPLL_been_set)
-	{
-		//Enabling the upll clock 
-		//NEED TO HAVE THE RIGHT conf_mcan.h !
-		pmc_enable_upll_clock();
-		// This was firstly changed to "pmc_switch_pck_to_pllack(PMC_PCK_5, PMC_PCK_PRES(9));" in the mcan_init function above.
-		//It is recomended in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
-		pmc_disable_pck(PMC_PCK_5);
-		//dividing uppl by 6 to get a 80 Mhz signal which is again divided by 8 in the CONF_MCAN_NBTP_NBRP_VALUE in the conf_mcan.h to get a 10 MHz.
-		pmc_switch_pck_to_upllck(PMC_PCK_5, PMC_PCK_PRES(5));
-		pmc_enable_pck(PMC_PCK_5);
+	//Enabling the upll clock 
+	//NEED TO HAVE THE RIGHT conf_mcan.h !
+	pmc_enable_upll_clock();
+	// This was firstly changed to "pmc_switch_pck_to_pllack(PMC_PCK_5, PMC_PCK_PRES(9));" in the mcan_init function above.
+	//It is recomended in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
+	pmc_disable_pck(PMC_PCK_5);
+	//dividing upll by 6 to get a 80 Mhz signal which is again divided by 8 in the CONF_MCAN_NBTP_NBRP_VALUE in the conf_mcan.h to get a 10 MHz for 500kbits/s default speed.
+	pmc_switch_pck_to_upllck(PMC_PCK_5, PMC_PCK_PRES(5));
+	pmc_enable_pck(PMC_PCK_5);
 
-		has_UPLL_been_set = 1;
-	}	
+	//has to be after set of PMC_PCK_5 as it uses it to calculate the MCAN_NBTP_NBRP_VALUE for the given speed.
+	//MCAN_NBTP_NBRP_VALUE = (PMC_PCK_5 frequency)/(baudrate asked)/20
+	//Here (PMC_PCK_5 frequency) = 80Mhz
+	//Changing default speed.
+	mcan_set_baudrate(mcan1_instance.hw, baudrate);
 
 	//choosing what interruption to activate
 	mcan_enable_interrupt(&mcan1_instance,
@@ -367,7 +367,8 @@ void MCAN0_INT1_Handler(void)
 
 				//we have to offset the buffer number in order to write in the fifo memory.
 				mcan_set_tx_buffer_element(&mcan0_instance, &tx_elem, CONF_MCAN0_TX_BUFFER_NUM);
-				mcan_tx_transfer_request(&mcan0_instance, 1 << CONF_MCAN0_TX_BUFFER_NUM);
+				int16_t stat = mcan_tx_transfer_request(&mcan0_instance, 1 << CONF_MCAN0_TX_BUFFER_NUM);
+				mcan0_buffer.buffer_being_emptied_by_interruption = true;
 			}
 			else
 			{
@@ -568,6 +569,7 @@ void MCAN1_INT1_Handler(void)
 				//we have to offset the buffer number in order to write in the fifo memory.
 				mcan_set_tx_buffer_element(&mcan1_instance, &tx_elem, CONF_MCAN1_TX_BUFFER_NUM);
 				mcan_tx_transfer_request(&mcan1_instance, 1 << CONF_MCAN1_TX_BUFFER_NUM);
+				mcan1_buffer.buffer_being_emptied_by_interruption = true;
 			}
 			else
 			{
@@ -708,7 +710,7 @@ uint8_t mcan0_send_message(uint32_t id_value, uint8_t *data, uint32_t data_lengt
 	result = circ_buf_flex_push(&mcan0_buffer.buffer_tx, &tx_element);
 	mcan0_buffer.adding_in_tx_buffer = false;
 
-	if((mcan0_buffer.interruption_occurred_while_adding_in_tx_buffer | !mcan0_buffer.buffer_being_emptied_by_interruption) & (result == CBF_SUCCESS))
+	if(mcan0_buffer.interruption_occurred_while_adding_in_tx_buffer | !mcan0_buffer.buffer_being_emptied_by_interruption)
 	{
 		//No need of this if we've just added a message to the buffer and prevent interruption to deal with messages !
 		//We know for sure that there is at least the message in our buffer.
@@ -718,7 +720,7 @@ uint8_t mcan0_send_message(uint32_t id_value, uint8_t *data, uint32_t data_lengt
 			circ_buf_flex_pop(&mcan0_buffer.buffer_tx, &tx_elem);
 			//we have to offset the buffer number in order to write in the fifo memory.
 			mcan_set_tx_buffer_element(&mcan0_instance, &tx_elem, CONF_MCAN0_TX_BUFFER_NUM);
-			mcan_tx_transfer_request(&mcan0_instance, 1 << CONF_MCAN0_TX_BUFFER_NUM);
+			int16_t stat = mcan_tx_transfer_request(&mcan0_instance, 1 << CONF_MCAN0_TX_BUFFER_NUM);
 			
 			//reset flags
 			mcan0_buffer.interruption_occurred_while_adding_in_tx_buffer = false;
@@ -763,7 +765,7 @@ uint8_t mcan1_send_message(uint32_t id_value, uint8_t *data, uint32_t data_lengt
 	result = circ_buf_flex_push(&mcan1_buffer.buffer_tx, &tx_element);
 	mcan1_buffer.adding_in_tx_buffer = false;
 
-	if((mcan1_buffer.interruption_occurred_while_adding_in_tx_buffer | !mcan1_buffer.buffer_being_emptied_by_interruption) & (result == CBF_SUCCESS))
+	if(mcan1_buffer.interruption_occurred_while_adding_in_tx_buffer | !mcan1_buffer.buffer_being_emptied_by_interruption)
 	{
 		//No need of this if we've just added a message to the buffer and prevent interruption to deal with messages !
 		//We know for sure that there is at least the message in our buffer.
