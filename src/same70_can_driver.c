@@ -116,14 +116,14 @@ void can_configure(enum can_line line, uint32_t baudrate, uint32_t rx_buffer_siz
 		MCAN_RX_FIFO_0_NEW_MESSAGE |
 		MCAN_FORMAT_ERROR |
 		MCAN_ACKNOWLEDGE_ERROR |
-		MCAN_BUS_OFF | 
+		MCAN_BUS_OFF |
 		MCAN_TIMESTAMP_COMPLETE |
-		MCAN_TX_CANCELLATION_FINISH | MCAN_TX_FIFO_EMPTY |
+		MCAN_TX_CANCELLATION_FINISH |
+		MCAN_TX_FIFO_EMPTY |
 		MCAN_TX_EVENT_FIFO_NEW_ENTRY |
 		MCAN_TX_EVENT_FIFO_WATERMARK |
 		MCAN_TX_EVENT_FIFO_FULL |
 		MCAN_TX_EVENT_FIFO_ELEMENT_LOST);
-	mcan_disable_interrupt(&can->instance, MCAN_TIMESTAMP_WRAPAROUND);
 	
 	//Interrupt Line Selection making all tx to the second line.
 	//using int0 for reception and basic errors
@@ -612,9 +612,8 @@ void _can_send_message(enum can_line line, uint32_t id_value, uint8_t *data, uin
 		data++;
 	}
 	
-	#define offsetTX CONF_MCAN1_TX_BUFFER_NUM
-	mcan_set_tx_buffer_element(&can->instance, &tx_element, offsetTX);
-	mcan_tx_transfer_request(&can->instance, 1 << offsetTX);
+	mcan_set_tx_buffer_element(&can->instance, &tx_element, can->buffer_tx_number);
+	mcan_tx_transfer_request(&can->instance, 1 << can->buffer_tx_number);
 }
 
 uint8_t can_send_message(enum can_line line, uint32_t id_value, uint8_t *data, uint32_t data_length, bool is_extended, bool is_remote_transmission)
@@ -663,8 +662,8 @@ uint8_t can_send_message(enum can_line line, uint32_t id_value, uint8_t *data, u
 			circ_buf_flex_pop(&can->buffer.buffer_tx, &tx_elem);
 			
 			//we have to offset the buffer number in order to write in the fifo memory.
-			mcan_set_tx_buffer_element(&can->instance, &tx_elem, CONF_MCAN0_TX_BUFFER_NUM);
-			mcan_tx_transfer_request(&can->instance, 1 << CONF_MCAN0_TX_BUFFER_NUM);
+			mcan_set_tx_buffer_element(&can->instance, &tx_elem, can->buffer_tx_number);
+			mcan_tx_transfer_request(&can->instance, 1 << can->buffer_tx_number);
 			
 			//reset flags
 			can->buffer.interruption_occurred_while_adding_in_tx_buffer = false;

@@ -157,7 +157,7 @@ typedef struct
     uint8_t data[CONF_MCAN_ELEMENT_DATA_SIZE];
 } can_tx_message_t;
 
-typedef struct can_t
+typedef struct
 {
     struct mcan_module instance;
 
