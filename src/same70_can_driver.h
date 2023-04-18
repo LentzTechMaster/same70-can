@@ -116,12 +116,12 @@ typedef struct
     {
         struct 
         {
-            uint8_t reserved 							: 3;
+            uint8_t reserved                            : 3;
 			uint8_t is_received_with_bitrate_switch     : 1;
-            uint8_t is_fd      							: 1;
-            uint8_t is_error     						: 1;
-            uint8_t is_remote_request      				: 1;
-            uint8_t is_extended      					: 1;
+            uint8_t is_fd                               : 1;
+            uint8_t is_error                            : 1;
+            uint8_t is_remote_request                   : 1;
+            uint8_t is_extended                         : 1;
         } bit;
         uint8_t all_8_bits;
     } message_info;
@@ -144,9 +144,9 @@ typedef struct
     //message info
 	union {
         struct {
-            uint8_t reserved 							: 6;
-            uint8_t is_remote_request      				: 1;
-            uint8_t is_extended      					: 1;
+            uint8_t reserved                            : 6;
+            uint8_t is_remote_request                   : 1;
+            uint8_t is_extended                         : 1;
         } bit;
         uint8_t all_8_bits;
     } message_info;
