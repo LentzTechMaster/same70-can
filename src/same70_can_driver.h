@@ -117,7 +117,7 @@ typedef struct
         struct 
         {
             uint8_t reserved                            : 3;
-			uint8_t is_received_with_bitrate_switch     : 1;
+            uint8_t is_received_with_bitrate_switch     : 1;
             uint8_t is_fd                               : 1;
             uint8_t is_error                            : 1;
             uint8_t is_remote_request                   : 1;
