@@ -109,7 +109,7 @@ typedef struct
     volatile uint8_t buffer_being_emptied_by_interruption;
 }can_buffer_t;
 
-typedef struct 
+typedef struct __attribute__((packed))
 {
     //message info
 	union 
@@ -132,14 +132,14 @@ typedef struct
     uint8_t data[CONF_MCAN_ELEMENT_DATA_SIZE];
 } can_rx_message_t;
 
-typedef struct 
+typedef struct __attribute__((packed))
 {
 	uint64_t					timestamp;
 	can_rx_message_t			rx_message;
 }can_timestamped_rx_message_t;
 
 
-typedef struct 
+typedef struct __attribute__((packed))
 {
     //message info
 	union {
