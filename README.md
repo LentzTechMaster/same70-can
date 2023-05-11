@@ -3,7 +3,7 @@ Implementation of CAN driver for SAME70
 
 In order to use this driver you must:
 
-[0] Add this driver to your project (include "same70_can_driver.h" where you need to use it).
+[0] Add this driver to your project by adding to the project the files inside src folder (include "same70_can_driver.h" where you need to use it).
 
 [1] Have the dependency "c-utils" in your project. You can find it at: https://github.com/LentzTechMaster/c-utils.git
 
@@ -107,5 +107,7 @@ Remark: If you want to only use one of the 2 CAN lines you can define only the o
 
 WARNING: This driver does not work when caching is enabled.
 This means that "CONF_BOARD_ENABLE_CACHE" SHOULD NOT be defined in conf_board.h.
+
+To be able to include directly "same70_can_driver.h" you might consider adding in project/setting/toolchain in 'ARM/GNU C compiler'->'Directories', 'ARM/GNU Assembler'->'General' and in 'ARM/GNU Preprocessing Assembler'->'General' the path to the folder containing the sources (src folder) of both c-utils and same70_can_driver
 
 /!\ /!\ /!\ 
