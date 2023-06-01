@@ -95,7 +95,7 @@ void can_configure(enum can_line line, uint32_t baudrate, uint32_t rx_buffer_siz
 	//NEED TO HAVE THE RIGHT conf_mcan.h !
 	pmc_enable_upll_clock();
 	// This was firstly changed to "pmc_switch_pck_to_pllack(PMC_PCK_5, PMC_PCK_PRES(9));" in the mcan_init function above.
-	//It is recomended in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
+	//It is recommended in the datasheet to use upllck as it is less subject to change. It is running at 480 MHz.
 	pmc_disable_pck(PMC_PCK_5);
 	//dividing upll by 6 to get a 80 Mhz signal 
 	//Which is again by default divided by 8 in the CONF_MCAN_NBTP_NBRP_VALUE in the conf_mcan.h to get a 10 MHz for 500kbits/s default speed.
