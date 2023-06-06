@@ -1,9 +1,9 @@
 #include "same70_can_driver.h"
 
-//#define MCAN0_INT0_DEBUG
-//#define MCAN0_INT1_DEBUG
-//#define MCAN1_INT0_DEBUG
-//#define MCAN1_INT1_DEBUG
+#define MCAN0_INT0_DEBUG
+#define MCAN0_INT1_DEBUG
+#define MCAN1_INT0_DEBUG
+#define MCAN1_INT1_DEBUG
 
 void _can_configure_rx_fifo_to_accept_all(struct mcan_module* module_inst)
 {
@@ -88,6 +88,8 @@ void can_configure(enum can_line line, uint32_t baudrate, uint32_t rx_buffer_siz
 	mcan_get_config_defaults(&config_mcan);
 	config_mcan.nonmatching_frames_action_standard = MCAN_NONMATCHING_FRAMES_REJECT;
 	config_mcan.nonmatching_frames_action_extended = MCAN_NONMATCHING_FRAMES_REJECT;
+	config_mcan.remote_frames_standard_reject = false;
+	config_mcan.remote_frames_extended_reject = false;
 
 	mcan_init(&can->instance, hw, &config_mcan);
 
