@@ -1,10 +1,10 @@
 #include "same70_can_driver.h"
-
+/*
 #define MCAN0_INT0_DEBUG
 #define MCAN0_INT1_DEBUG
 #define MCAN1_INT0_DEBUG
 #define MCAN1_INT1_DEBUG
-
+*/
 void _can_configure_rx_fifo_to_accept_all(struct mcan_module* module_inst)
 {
 	/*  
